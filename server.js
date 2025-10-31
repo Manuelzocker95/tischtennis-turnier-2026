@@ -64,7 +64,7 @@ app.get('/api/ranking',(req,res)=>{
 
 app.get('/api/teilnehmer', basicAuth, (req,res)=>{
   const rows = parseCsv(fs.readFileSync(CSV,'utf8'));
-  rows.sort((a,b)=> parseInt(b.id) - parseInt(a.id));
+  rows.sort((a,b) => parseInt(b.id) - parseInt(a.id));
   res.json(rows);
 });
 
