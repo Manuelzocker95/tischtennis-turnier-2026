@@ -2,25 +2,29 @@
 <html lang="de">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>🏓 TOP TURNIER ANMELDUNG 2026</title>
+<title>🏓 TOP TURNIER ANMELDUNG</title>
 <link rel="icon" href="logo.png">
 <style>
 :root{--accent:#d21d1d;--accent-dark:#b31515}
 *{box-sizing:border-box;font-family:Inter, Arial, sans-serif}
-body{margin:0;min-height:100vh;background:url('tt_modern_bg_2026_v2.jpg') center/cover no-repeat fixed;display:flex;align-items:flex-start;justify-content:center}
+body{margin:0;min-height:100vh;background:url('tt_bg_v3.jpg') center/cover no-repeat fixed;display:flex;align-items:flex-start;justify-content:center}
 .card{width:100%;max-width:760px;background:rgba(255,255,255,0.94);margin:clamp(32px,6vh,64px) 16px 48px;padding:26px;border-radius:18px;box-shadow:0 12px 44px rgba(0,0,0,.35);border:4px solid rgba(255,255,255,.06)}
 .header{display:flex;align-items:center;gap:16px}
-.logo{width:96px;height:96px;border-radius:12px;overflow:hidden;flex:0 0 96px;transform:translateY(-40px);opacity:0;animation:logoIn 900ms cubic-bezier(.22,.9,.3,1) forwards}
-@keyframes logoIn{to{transform:none;opacity:1}}
-.title{font-size:clamp(22px,3.2vw,30px);font-weight:900;color:#111;margin:0}
-.countdown{margin-top:14px;padding:12px;border-radius:12px;background:#fff6d8;border:2px solid var(--accent);color:var(--accent);font-weight:800;text-align:center}
+.logo{width:96px;height:96px;border-radius:12px;overflow:hidden;flex:0 0 96px}
+.title-wrap{flex:1;text-align:center}
+.h1{margin:0;font-weight:900;font-size:clamp(24px,3.4vw,32px);opacity:0;transform:translateY(-26px);animation:flyDown 900ms cubic-bezier(.22,.9,.3,1) 120ms forwards; text-shadow:0 0 0 rgba(210,29,29,0);}
+.year{margin:4px 0 0 0;font-size:clamp(18px,2.8vw,26px);font-weight:800;color:#d21d1d;opacity:0;transform:translateY(-18px);animation:flyDown 800ms cubic-bezier(.22,.9,.3,1) 260ms forwards}
+@keyframes flyDown{
+  to{opacity:1; transform:none; text-shadow:0 0 16px rgba(210,29,29,.25);}
+}
+.countdown{margin-top:14px;padding:12px;border-radius:12px;background:#fff6d8;border:2px solid var(--accent);color:#a31212;font-weight:800;text-align:center}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
 .input{width:100%;padding:12px;border-radius:10px;border:1px solid #ddd;font-size:16px}
 .input-full{grid-column:1/-1}
 .btn{margin-top:16px;padding:14px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-weight:800;font-size:16px;cursor:pointer}
-.small{color:#666;margin-top:10px;text-align:center;font-size:14px}
 .panel{margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:8px}
 .cta-link{display:inline-block;padding:10px 14px;border-radius:10px;background:#f3f3f3;text-decoration:none;color:#111;border:1px solid #e7e7e7;font-weight:800}
+.small{color:#666;margin-top:10px;text-align:center;font-size:14px}
 @media (max-width:640px){.form-grid{grid-template-columns:1fr} .logo{width:72px;height:72px}}
 </style>
 </head>
@@ -29,8 +33,11 @@ body{margin:0;min-height:100vh;background:url('tt_modern_bg_2026_v2.jpg') center
 
 <div class="card" role="main" aria-labelledby="main-title">
   <div class="header">
-    <div class="logo"><img src="logo.png" alt="Logo" style="width:100%;height:100%;object-fit:cover"></div>
-    <div><h1 id="main-title" class="title">🏓 TOP TURNIER ANMELDUNG 2026</h1></div>
+    <img src="logo.png" alt="Logo" class="logo"/>
+    <div class="title-wrap">
+      <h1 id="main-title" class="h1">🏓 TOP TURNIER ANMELDUNG</h1>
+      <h2 class="year">2026</h2>
+    </div>
   </div>
 
   <div id="countdown" class="countdown">Lade Countdown…</div>
@@ -55,24 +62,34 @@ body{margin:0;min-height:100vh;background:url('tt_modern_bg_2026_v2.jpg') center
 </div>
 
 <script>
-const turnierDate = new Date("2026-01-03T10:00:00");
+// Countdown bis 03.01.2026 12:00
+const turnierDate = new Date("2026-01-03T12:00:00");
 function pad(n){return String(n).padStart(2,'0')}
 function updateCountdown(){
-  const now=new Date(); const diff=turnierDate-now;
-  if(diff<=0){document.getElementById('countdown').textContent='Das Turnier hat begonnen!';return;}
-  const d=Math.floor(diff/86400000),h=Math.floor(diff/3600000%24),m=Math.floor(diff/60000%60),s=Math.floor(diff/1000%60);
-  document.getElementById('countdown').textContent=`Turnier startet in: ${d} Tage ${pad(h)}:${pad(m)}:${pad(s)}`;
+  const now=new Date(); const diff = turnierDate - now;
+  const el = document.getElementById('countdown');
+  if(diff<=0){el.textContent='Das Turnier hat begonnen!'; return;}
+  const days = Math.floor(diff/86400000);
+  const hours = Math.floor(diff/3600000%24);
+  const minutes = Math.floor(diff/60000%60);
+  const seconds = Math.floor(diff/1000%60);
+  el.textContent = `Turnier startet in: ${days} Tage ${hours} Stunden ${minutes} Minuten ${seconds} Sekunden`;
 }
-setInterval(updateCountdown,1000);updateCountdown();
+setInterval(updateCountdown,1000); updateCountdown();
 
-const bgmusic=document.getElementById('bgmusic'); bgmusic.volume=0.15;
-document.addEventListener('click',()=>{bgmusic.play().catch(()=>{});},{once:true});
+// Musik leise nach erstem Klick starten
+const bgmusic = document.getElementById('bgmusic');
+bgmusic.volume = 0.15;
+document.addEventListener('click', ()=>{ bgmusic.play().catch(()=>{}); }, {once:true});
 
-document.getElementById('signupForm').addEventListener('submit',async e=>{
+// Formular absenden
+document.getElementById('signupForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
-  const data=Object.fromEntries(new FormData(e.target));
-  const res=await fetch('/anmelden',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
-  const txt=await res.text(); alert(txt); e.target.reset();
+  const data = Object.fromEntries(new FormData(e.target));
+  const res = await fetch('/anmelden', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data)});
+  const txt = await res.text();
+  alert(txt);
+  e.target.reset();
 });
 </script>
 </body>

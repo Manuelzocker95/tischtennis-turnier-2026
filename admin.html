@@ -49,9 +49,7 @@ function render(){
     return !q || blob.includes(q);
   });
   rows.sort((a,b) => (a.nachname||'').localeCompare(b.nachname||'', 'de', {sensitivity:'base'}));
-
   if(rows.length===0){ document.getElementById('content').textContent='Keine Treffer'; return; }
-
   const body = rows.map((p,i)=> rowHtml(p,i+1)).join('');
   document.getElementById('content').innerHTML = `<table><thead><tr><th>#</th><th>Vorname</th><th>Nachname</th><th>Geburtsdatum</th><th>TTR</th><th>Verein</th><th>Aktion</th></tr></thead><tbody>${body}</tbody></table>`;
 }
@@ -94,7 +92,6 @@ async function delRow(btn){
   const id = tr.getAttribute('data-id');
   const row = allRows.find(x=>x.id===id);
   lastDeleted = row ? {...row} : null;
-
   const r = await fetch('/api/teilnehmer/'+encodeURIComponent(id), { method:'DELETE' });
   if(!r.ok){ alert('Fehler beim Löschen'); return; }
   allRows = allRows.filter(x=>x.id!==id);
@@ -108,9 +105,7 @@ function showUndo(){
   clearTimeout(undoTimer);
   undoTimer = setTimeout(()=>{ hideUndo(); lastDeleted = null; }, 10000);
 }
-function hideUndo(){
-  document.getElementById('undo').style.display = 'none';
-}
+function hideUndo(){ document.getElementById('undo').style.display = 'none'; }
 async function undoDelete(){
   if(!lastDeleted) return hideUndo();
   const payload = {
@@ -121,9 +116,7 @@ async function undoDelete(){
     verein: lastDeleted.verein || ''
   };
   await fetch('/anmelden', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
-  lastDeleted = null;
-  hideUndo();
-  load();
+  lastDeleted = null; hideUndo(); load();
 }
 
 document.getElementById('search').addEventListener('input', render);
