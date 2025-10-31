@@ -19,11 +19,14 @@ body{margin:0;min-height:100vh;background:url('tt_bg_v31.jpg') center/cover no-r
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
 .input{width:100%;padding:12px;border-radius:10px;border:1px solid #ddd;font-size:16px}
 .input-full{grid-column:1/-1}
+.input-wrap{position:relative}
+.label-ghost{position:absolute;left:12px;top:12px;color:#888;pointer-events:none;transition:all .15s ease;font-size:16px}
+input[type="date"].has-value + .label-ghost,
+input[type="date"]:focus + .label-ghost{opacity:0;transform:translateY(-6px)}
 .btn{margin-top:16px;padding:14px 16px;border-radius:12px;border:none;background:var(--accent);color:#fff;font-weight:800;font-size:16px;cursor:pointer}
 .panel{margin-top:18px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
 .cta-link{display:inline-block;padding:10px 14px;border-radius:10px;background:#f3f3f3;text-decoration:none;color:#111;border:1px solid #e7e7e7;font-weight:800}
 .small{color:#666;margin-top:10px;text-align:center;font-size:14px}
-/* ---- Mobile tweaks ---- */
 @media (max-width: 720px){
   .form-grid{grid-template-columns:1fr}
   .card{max-width:96vw;padding:20px;margin:20px 10px 28px}
@@ -55,7 +58,11 @@ body{margin:0;min-height:100vh;background:url('tt_bg_v31.jpg') center/cover no-r
     <div class="form-grid">
       <input class="input" name="vorname" placeholder="Vorname" required>
       <input class="input" name="nachname" placeholder="Nachname" required>
-      <input class="input" name="geburtsdatum" type="date" placeholder="Geburtsdatum" required>
+      <!-- Date input with visible overlay label -->
+      <div class="input-wrap input-full">
+        <input class="input" id="geburtsdatum" name="geburtsdatum" type="date" aria-label="Geburtsdatum" required>
+        <span class="label-ghost">Geburtsdatum (TT.mm.jjjj)</span>
+      </div>
       <input class="input" name="ttr" type="number" placeholder="TTR Punkte" required>
       <input class="input input-full" name="verein" placeholder="Verein">
     </div>
@@ -73,9 +80,7 @@ body{margin:0;min-height:100vh;background:url('tt_bg_v31.jpg') center/cover no-r
 <script>
 // Countdown bis 03.01.2026 12:00
 const turnierDate = new Date("2026-01-03T12:00:00");
-
 function twoLineMode(){ return window.matchMedia('(max-width: 520px)').matches; }
-
 function formatCountdown(diffMs){
   if(diffMs <= 0) return { html: 'Das Turnier hat begonnen!', text: 'Das Turnier hat begonnen!' };
   const d = Math.floor(diffMs/86400000);
@@ -88,7 +93,6 @@ function formatCountdown(diffMs){
     ? { html: `Turnier startet in:<br>${line1}<br>${line2}`, text: null }
     : { html: null, text: `Turnier startet in: ${d} Tage ${h} Stunden ${m} Minuten ${s} Sekunden` };
 }
-
 function updateCountdown(){
   const now = new Date();
   const diff = turnierDate - now;
@@ -99,6 +103,12 @@ function updateCountdown(){
 setInterval(updateCountdown, 1000);
 updateCountdown();
 window.addEventListener('resize', updateCountdown);
+
+// Visible placeholder handling for date input
+const dateInput = document.getElementById('geburtsdatum');
+function toggleGhost(){ dateInput.classList.toggle('has-value', !!dateInput.value); }
+['change','input','blur','focus'].forEach(ev => dateInput.addEventListener(ev, toggleGhost));
+toggleGhost();
 
 // Musik leise nach erstem Klick starten
 const bgmusic = document.getElementById('bgmusic');
@@ -112,7 +122,7 @@ document.getElementById('signupForm').addEventListener('submit', async (e)=>{
   const res = await fetch('/anmelden', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data)});
   const txt = await res.text();
   alert(txt);
-  e.target.reset();
+  e.target.reset(); toggleGhost();
 });
 </script>
 </body>
