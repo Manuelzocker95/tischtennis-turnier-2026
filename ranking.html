@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live‑Ranking – TTR</title>
+<style>
+body{margin:0;font-family:Inter, Arial, sans-serif;background:#0f0f0f;color:#fff}
+.header{padding:16px 20px;background:#151515;position:sticky;top:0;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.h1{margin:0;font-size:20px;font-weight:800}
+.list{max-width:900px;margin:16px auto;padding:0 16px}
+.row{display:flex;justify-content:space-between;align-items:center;background:#1d1d1d;border:1px solid #252525;border-radius:10px;margin:8px 0;padding:12px 14px}
+.name{font-weight:800}
+.meta{font-size:13px;color:#bdbdbd}
+.score{font-weight:900;font-size:18px;color:#ff5a5a}
+</style>
+</head>
+<body>
+<div class="header"><h1 class="h1">🏆 Live‑Ranking nach TTR</h1></div>
+<div id="list" class="list">Lade…</div>
+<script>
+async function load(){
+  try{
+    const r = await fetch('/api/ranking');
+    const data = await r.json();
+    const root = document.getElementById('list');
+    root.innerHTML = '';
+    if(data.length===0){ root.textContent = 'Noch keine Anmeldungen'; return; }
+    data.forEach((p,i)=>{
+      const div = document.createElement('div'); div.className='row';
+      div.innerHTML = `<div><div class="name">${i+1}. ${escapeHtml(p.vorname)} ${escapeHtml(p.nachname)}</div><div class="meta">${escapeHtml(p.verein||'')}</div></div><div class="score">${escapeHtml(p.ttr||'0')}</div>`;
+      root.appendChild(div);
+    });
+  }catch(e){ console.error(e); }
+}
+function escapeHtml(s){return String(s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c])}
+setInterval(load, 5000); load();
+</script>
+</body>
+</html>
